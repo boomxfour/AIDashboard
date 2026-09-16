@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>AI Dashboard</title>
+
+<style>
+@font-face {
+  font-family: 'UnifixSPDemo';
+  src: url('UnifixSPDemo.otf') format('opentype');
+}
+
+* {
+  font-family: 'UnifixSPDemo', sans-serif !important;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #3a0f18, #120609);
+  color: white;
+  overflow: hidden;
+}
+
+.topbar {
+  background: rgba(10, 2, 4, 0.9);
+  padding: 12px 0;
+  text-align: center;
+  letter-spacing: 3px;
+  font-size: 13px;
+}
+
+h1 {
+  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  font-size: 32px;
+}
+
+.wrapper {
+  height: calc(100vh - 120px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Сетка Pinterest-style с разной высотой и шириной колонок */
+.container {
+  width: 85%;
+  height: 85%;
+
+  display: grid;
+  grid-template-columns: 2fr 1.3fr 1.7fr;
+  grid-template-rows: 1.2fr 0.8fr 1fr;
+  gap: 18px;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 24px;
+  cursor: pointer;
+
+  font-size: 28px;
+  text-align: center;
+  text-transform: lowercase; /* Все названия с маленькой буквы */
+
+  transition: 0.25s;
+}
+
+.card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 25px rgba(200, 50, 70, 0.6);
+}
+
+/* Pinterest-раскладка: у всех карточек разные размеры */
+
+/* 1. ChatGPT — главный высокий блок слева */
+.chatgpt {
+  grid-column: 1;
+  grid-row: 1 / 4;
+}
+
+/* 2. DeepSeek — широкая карточка сверху по центру */
+.deepseek {
+  grid-column: 2 / 4;
+  grid-row: 1;
+}
+
+/* 3. Claude — вертикальный средний блок снизу по центру */
+.claude {
+  grid-column: 2;
+  grid-row: 2 / 4;
+}
+
+/* 4. Gemini — небольшой квадратный блок справа */
+.gemini {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+/* 5. Perplexity — прямоугольник в правом нижнем углу */
+.perplexity {
+  grid-column: 3;
+  grid-row: 3;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">AI NAVIGATION</div>
+<h1>neural tools</h1>
+
+<div class="wrapper">
+  <div class="container" id="container"></div>
+</div>
+
+<script>
+// ChatGPT на первом месте
+const data = [
+  { name: "chatgpt", url: "https://chat.openai.com", class: "chatgpt" },
+  { name: "deepseek", url: "https://chat.deepseek.com/", class: "deepseek" },
+  { name: "claude", url: "https://claude.ai/", class: "claude" },
+  { name: "gemini", url: "https://gemini.google.com/", class: "gemini" },
+  { name: "perplexity", url: "https://www.perplexity.ai/", class: "perplexity" }
+];
+
+const container = document.getElementById("container");
+
+function getColorByIndex(index, total) {
+  const t = total > 1 ? index / (total - 1) : 0;
+
+  const r = 150 - t * 60;
+  const g = 35 - t * 10;
+  const b = 45 - t * 10;
+
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+data.forEach((item, index) => {
+  const div = document.createElement("div");
+  div.className = `card ${item.class}`;
+
+  div.style.background = getColorByIndex(index, data.length);
+  div.innerText = item.name;
+
+  div.onclick = () => {
+    window.open(item.url, "_blank");
+  };
+
+  container.appendChild(div);
+});
+</script>
+
+</body>
+</html>
