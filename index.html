@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>AI Dashboard</title>
+<title>Dashboard</title>
 
 <style>
 @font-face {
@@ -20,41 +20,111 @@ body {
   background: linear-gradient(135deg, #3a0f18, #120609);
   color: white;
   overflow: hidden;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
+/* Верхняя панель */
 .topbar {
   background: rgba(10, 2, 4, 0.9);
   padding: 12px 0;
   text-align: center;
   letter-spacing: 3px;
   font-size: 13px;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.topbar-link {
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+  user-select: none;
+}
+
+.topbar-link.active, .topbar-link:hover {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(200, 50, 70, 0.8);
+}
+
+.topbar-divider {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+/* Зона заголовка */
+.header-zone {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 45px;
 }
 
 h1 {
-  text-align: center;
-  margin-top: 40px;
-  margin-bottom: 20px;
+  margin: 0;
   font-size: 32px;
+  text-align: center;
+  transition: opacity 0.3s ease;
 }
 
+/* Основной контейнер */
 .wrapper {
   height: calc(100vh - 120px);
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+  margin-bottom: 20px;
 }
 
-/* Сетка Pinterest-style с разной высотой и шириной колонок */
+/* Навигация (стрелочки) */
+.nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 40px;
+  color: rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  user-select: none;
+  padding: 20px;
+  transition: all 0.3s ease;
+  z-index: 5;
+}
+
+.nav-arrow:hover {
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 0 15px rgba(200, 50, 70, 0.8);
+  transform: translateY(-50%) scale(1.15);
+}
+
+.arrow-left { left: 20px; }
+.arrow-right { right: 20px; }
+
+/* Общая сетка страниц */
 .container {
   width: 85%;
-  height: 85%;
-
+  height: 90%;
   display: grid;
-  grid-template-columns: 2fr 1.3fr 1.7fr;
-  grid-template-rows: 1.2fr 0.8fr 1fr;
   gap: 18px;
 }
 
+.page {
+  display: none;
+  opacity: 0;
+  transform: scale(0.98);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.page.active {
+  display: grid;
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Карточки */
 .card {
   display: flex;
   align-items: center;
@@ -63,11 +133,11 @@ h1 {
   border-radius: 24px;
   cursor: pointer;
 
-  font-size: 28px;
+  font-size: 26px;
   text-align: center;
-  text-transform: lowercase; /* Все названия с маленькой буквы */
+  text-transform: lowercase;
 
-  transition: 0.25s;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .card:hover {
@@ -75,84 +145,181 @@ h1 {
   box-shadow: 0 0 25px rgba(200, 50, 70, 0.6);
 }
 
-/* Pinterest-раскладка: у всех карточек разные размеры */
-
-/* 1. ChatGPT — главный высокий блок слева */
-.chatgpt {
-  grid-column: 1;
-  grid-row: 1 / 4;
+/* --- СТРАНИЦА 1: AI TOOLS --- */
+#page-ai {
+  grid-template-columns: 2fr 1.3fr 1.7fr;
+  grid-template-rows: 1.2fr 0.8fr 1fr;
 }
 
-/* 2. DeepSeek — широкая карточка сверху по центру */
-.deepseek {
-  grid-column: 2 / 4;
-  grid-row: 1;
+.chatgpt    { grid-column: 1; grid-row: 1 / 4; }
+.deepseek   { grid-column: 2 / 4; grid-row: 1; }
+.claude     { grid-column: 2; grid-row: 2 / 4; }
+.gemini     { grid-column: 3; grid-row: 2; }
+.perplexity { grid-column: 3; grid-row: 3; }
+
+/* --- СТРАНИЦА 2: SOCIAL MEDIA --- */
+#page-social {
+  grid-template-columns: 1.7fr 1.3fr 2fr;
+  grid-template-rows: 1fr 0.8fr 1.2fr;
 }
 
-/* 3. Claude — вертикальный средний блок снизу по центру */
-.claude {
-  grid-column: 2;
-  grid-row: 2 / 4;
+.yandex-mail { grid-column: 1; grid-row: 1; }
+.gmail       { grid-column: 1; grid-row: 2 / 4; }
+.vk          { grid-column: 2; grid-row: 1 / 3; }
+.github      { grid-column: 2 / 4; grid-row: 3; }
+.youtube     { grid-column: 3; grid-row: 1 / 3; }
+
+/* --- СТРАНИЦА 3: STUDY TOOLS (6 элементов) --- */
+#page-study {
+  grid-template-columns: 1.8fr 1.4fr 1.4fr;
+  grid-template-rows: 1fr 1fr 1fr;
 }
 
-/* 4. Gemini — небольшой квадратный блок справа */
-.gemini {
-  grid-column: 3;
-  grid-row: 2;
-}
-
-/* 5. Perplexity — прямоугольник в правом нижнем углу */
-.perplexity {
-  grid-column: 3;
-  grid-row: 3;
-}
+.schedule   { grid-column: 1; grid-row: 1 / 3; }
+.vyatsu     { grid-column: 2; grid-row: 1; }
+.outlook    { grid-column: 1 / 3; grid-row: 3; }
+.ispring    { grid-column: 3; grid-row: 1; }
+.overleaf   { grid-column: 2 / 4; grid-row: 2; }
+.classroom  { grid-column: 3; grid-row: 3; }
 </style>
 </head>
 
 <body>
 
-<div class="topbar">AI NAVIGATION</div>
-<h1>neural tools</h1>
+<div class="topbar">
+  <span class="topbar-link active" onclick="switchPage('ai')">AI NAVIGATION</span>
+  <span class="topbar-divider">|</span>
+  <span class="topbar-link" onclick="switchPage('social')">SOCIAL MEDIA</span>
+  <span class="topbar-divider">|</span>
+  <span class="topbar-link" onclick="switchPage('study')">STUDY</span>
+</div>
+
+<div class="header-zone">
+  <h1 id="page-title">neural tools</h1>
+</div>
 
 <div class="wrapper">
-  <div class="container" id="container"></div>
+  <div class="nav-arrow arrow-left" onclick="prevPage()">&lt;</div>
+  
+  <!-- Страница 1: AI -->
+  <div class="container page active" id="page-ai"></div>
+
+  <!-- Страница 2: Social -->
+  <div class="container page" id="page-social"></div>
+
+  <!-- Страница 3: Study -->
+  <div class="container page" id="page-study"></div>
+
+  <div class="nav-arrow arrow-right" onclick="nextPage()">&gt;</div>
 </div>
 
 <script>
-// ChatGPT на первом месте
-const data = [
-  { name: "chatgpt", url: "https://chat.openai.com", class: "chatgpt" },
-  { name: "deepseek", url: "https://chat.deepseek.com/", class: "deepseek" },
-  { name: "claude", url: "https://claude.ai/", class: "claude" },
-  { name: "gemini", url: "https://gemini.google.com/", class: "gemini" },
-  { name: "perplexity", url: "https://www.perplexity.ai/", class: "perplexity" }
-];
+const pagesData = {
+  ai: {
+    title: "neural tools",
+    items: [
+      { name: "chatgpt", url: "https://chat.openai.com", class: "chatgpt" },
+      { name: "deepseek", url: "https://chat.deepseek.com/", class: "deepseek" },
+      { name: "claude", url: "https://claude.ai/", class: "claude" },
+      { name: "gemini", url: "https://gemini.google.com/", class: "gemini" },
+      { name: "perplexity", url: "https://www.perplexity.ai/", class: "perplexity" }
+    ]
+  },
+  social: {
+    title: "social & mail",
+    items: [
+      { name: "vk", url: "https://vk.com", class: "vk" },
+      { name: "youtube", url: "https://youtube.com", class: "youtube" },
+      { name: "github", url: "https://github.com", class: "github" },
+      { name: "яндекс почта", url: "https://mail.yandex.ru", class: "yandex-mail" },
+      { name: "gmail", url: "https://mail.google.com", class: "gmail" }
+    ]
+  },
+  study: {
+    title: "study tools",
+    items: [
+      { name: "расписание вятгу", url: "https://new.vyatsu.ru/account/", class: "schedule" },
+      { name: "вятгу", url: "https://www.vyatsu.ru/", class: "vyatsu" },
+      { name: "outlook", url: "https://outlook.office.com/mail/", class: "outlook" },
+      { name: "ispring", url: "https://vyatsu.ispring.ru/", class: "ispring" },
+      { name: "overleaf", url: "https://www.overleaf.com/", class: "overleaf" },
+      { name: "google classroom", url: "https://classroom.google.com", class: "classroom" }
+    ]
+  }
+};
 
-const container = document.getElementById("container");
+const pagesKeys = Object.keys(pagesData);
+let currentPageIndex = 0;
 
 function getColorByIndex(index, total) {
   const t = total > 1 ? index / (total - 1) : 0;
-
   const r = 150 - t * 60;
   const g = 35 - t * 10;
   const b = 45 - t * 10;
-
   return `rgb(${r}, ${g}, ${b})`;
 }
 
-data.forEach((item, index) => {
-  const div = document.createElement("div");
-  div.className = `card ${item.class}`;
+function renderPages() {
+  pagesKeys.forEach((key) => {
+    const pageObj = pagesData[key];
+    const container = document.getElementById(`page-${key}`);
+    container.innerHTML = "";
 
-  div.style.background = getColorByIndex(index, data.length);
-  div.innerText = item.name;
+    pageObj.items.forEach((item, index) => {
+      const div = document.createElement("div");
+      div.className = `card ${item.class}`;
+      div.style.background = getColorByIndex(index, pageObj.items.length);
+      div.innerText = item.name;
 
-  div.onclick = () => {
-    window.open(item.url, "_blank");
-  };
+      div.onclick = () => {
+        window.open(item.url, "_blank");
+      };
 
-  container.appendChild(div);
-});
+      container.appendChild(div);
+    });
+  });
+}
+
+function updateUI() {
+  const currentKey = pagesKeys[currentPageIndex];
+  const titleEl = document.getElementById("page-title");
+
+  titleEl.style.opacity = "0";
+
+  document.querySelectorAll(".page").forEach(el => {
+    el.classList.remove("active");
+  });
+
+  setTimeout(() => {
+    const activePage = document.getElementById(`page-${currentKey}`);
+    activePage.classList.add("active");
+    titleEl.innerText = pagesData[currentKey].title;
+    titleEl.style.opacity = "1";
+  }, 150);
+
+  document.querySelectorAll(".topbar-link").forEach((el, idx) => {
+    el.classList.toggle("active", idx === currentPageIndex);
+  });
+}
+
+function switchPage(key) {
+  const targetIndex = pagesKeys.indexOf(key);
+  if (targetIndex === currentPageIndex) return;
+  currentPageIndex = targetIndex;
+  updateUI();
+}
+
+function nextPage() {
+  currentPageIndex = (currentPageIndex + 1) % pagesKeys.length;
+  updateUI();
+}
+
+function prevPage() {
+  currentPageIndex = (currentPageIndex - 1 + pagesKeys.length) % pagesKeys.length;
+  updateUI();
+}
+
+renderPages();
 </script>
 
 </body>
